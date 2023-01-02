@@ -1,46 +1,66 @@
-# Getting Started with Create React App
+# Soflytics Interview: Coding Exercise
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Objective: Implement an Event Bus for use inside of React App
 
-## Available Scripts
+The goal of this event bus is for React components to register listeners which will fire upon an event being triggered. 
 
-In the project directory, you can run:
+You will modify the files inside of the `src/EventBus` directory. 
+The first file is `EventBus.ts`. This is the EventBus itself where listeners will be registered and events will be fired.
 
-### `npm start`
+Example usage of `EventBus.ts` API:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+const deregister1 = eventBus.register('some-event', () => {
+    console.log('Hello 1');
+});
+eventBus.register('some-event', () => {
+    console.log('Hello 2');
+});
+eventBus.register('some-other-event', () => {
+    console.log('Hello 3');
+});
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+eventBus.emit('some-event');
+// Hello 1
+// Hello 2
 
-### `npm test`
+deregister1();
+eventBus.emit('some-event');
+// Hello 2
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The second file is `useEventBusListener.ts`
 
-### `npm run build`
+This file will handle registering/deregistering a listener while a component is mounted.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Example usage of `useEventBusListener.ts` API:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+const SomeComponent = () => {
+    const [count, setCount] = useState(0);
+    useEventBusListener('increment', () => {
+        setCount(pv => pv+1);
+    });
+    useEventBusListener('done', () => {
+        console.log('All done!');
+    })
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    console.log(count);
+    if(count < 5) {
+        eventBus.emit('increment');
+    } else {
+        eventBus.emit('done');
+    }
 
-### `npm run eject`
+    return null;
+}
+// Console log output below
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+// Render 1: 0
+// Render 2: 1
+// Render 3: 2
+// Render 4: 3
+// Render 5: 4
+// Render 6: 5 All done!
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
