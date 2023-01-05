@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import EvalParent from './Eval/EvalParent';
 import EvalStandalone from './Eval/EvalStandalone';
 
